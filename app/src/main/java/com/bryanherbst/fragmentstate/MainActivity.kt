@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -18,11 +19,11 @@ class MainActivity : AppCompatActivity() {
     private val fragments = mutableMapOf<Int, Fragment>()
 
     private val navigationSelectionListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        val newFragment = if (keep_switch.isChecked)  {
-            fragments[item.itemId] ?: SampleFragment()
+        val newFragment = if (keep_switch.isChecked) {
+            fragments[item.itemId] ?: SampleHostFragment()
         } else {
             // We are pretending we aren't keeping the Fragments in memory
-            SampleFragment()
+            SampleHostFragment()
         }
         fragments[item.itemId] = newFragment
 
@@ -33,12 +34,15 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, newFragment)
+//                .setPrimaryNavigationFragment(newFragment)
+//                .setReorderingAllowed(true)
                 .commitNowAllowingStateLoss()
 
-         true
+        true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.plant(Timber.DebugTree())
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -53,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             keep_switch.isChecked = savedInstanceState.getBoolean(STATE_KEEP_FRAGS)
 
             val helperState = savedInstanceState.getBundle(STATE_HELPER)
-            stateHelper.restoreHelperState(helperState)
+            stateHelper.restoreHelperState(helperState!!)
         }
     }
 
@@ -69,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveCurrentState() {
-        fragments[navigation.selectedItemId]?.let { oldFragment->
+        fragments[navigation.selectedItemId]?.let { oldFragment ->
             stateHelper.saveState(oldFragment, navigation.selectedItemId)
         }
     }

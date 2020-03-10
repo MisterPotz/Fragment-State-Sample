@@ -27,5 +27,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/button_text"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To next"
+        android:layout_gravity="center"
+        android:id="@+id/stubBtn"
+        />
 
 </LinearLayout>
